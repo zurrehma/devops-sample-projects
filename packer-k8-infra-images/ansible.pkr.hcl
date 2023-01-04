@@ -11,7 +11,7 @@ variable "region" {
   default = "eu-west-1"
 }
 source "amazon-ebs" "k8-node" {
-  ami_name = "k8-packer-ami"
+  ami_name = "ansible-packer-ami"
   instance_type = "t2.micro"
   region        = var.region
   source_ami_filter {
@@ -33,7 +33,20 @@ build {
     source      = "../tf-packer.pub"
     destination = "/tmp/tf-packer.pub"
   }
+  provisioner "file" {
+    source = "../ansible-scripts/dynamic-inventory.yml"
+    destination = "/tmp/dynamic-inventory.aws_ec2.yaml"
+  }
   provisioner "shell" {
-    script = "./scripts/bootstrap.sh"
+    environment_vars = [
+    "USERNAME=ansible-user"
+  ]
+    script = "./scripts/base-bootstrap.sh"
+  }
+  provisioner "shell" {
+    environment_vars = [
+    "USERNAME=ansible-user"
+  ]
+    script = "./scripts/ansible-bootstrap.sh"
   }
 }

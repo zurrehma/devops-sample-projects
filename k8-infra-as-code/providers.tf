@@ -16,6 +16,6 @@ provider "aws" {
   region = var.aws_region
 }
 
-variable "aws_region" {
-  
+output "aws_az" {
+  value = data.aws_availability_zones.available
 }
